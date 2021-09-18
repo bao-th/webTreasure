@@ -1,17 +1,33 @@
-for (const key in object) {
-    if (Object.hasOwnProperty.call(object, key)) {
-        const element = object[key];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        class A {
 
-    }
-}
+            state = {a:'',b:''} //实例上，实例对象可以找到
 
-let a = {}
-Object.freeze(a)
-a.a = 1
-console.log(a);
-Object.defineProperty(a, 'a', {
-    value: 1,
-    enumerable: false
-})
-console.log(a);
-Object.defineProperties()
+            static type = 'bth' //类本身上，类可以找到
+
+            func = ()=>{} //实例上，实例对象可以找到
+
+            render(){} //原型上，实例对象可以找到
+
+        }
+        const a = new A()
+        console.log(a)
+        console.log('A.state',A.state)
+        console.log('A.type',A.type)
+        console.log('A.render',A.render)
+        console.log('a.state',a.state)
+        console.log('a.type',a.type)
+        console.log('a.render',a.render)
+        console.log('a.func',a.func)
+    </script>
+</body>
+</html>
