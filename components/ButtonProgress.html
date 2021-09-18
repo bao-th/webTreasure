@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ButtonProgress</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/css/all.css">
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: rgba(83, 253, 253, 0.658);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            width: 160px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            background-color: #fff;
+            border-radius: 10px;
+            font-size: 18px;
+            position: relative;
+            margin: 0 15px;
+            overflow: hidden;
+            top: 300px;
+        }
+
+        .text {
+            z-index: 10;
+        }
+
+        .progress {
+            background-color: #4776E6;
+            position: absolute;
+            left: -100%;
+            top: 90%;
+            width: 100%;
+            height: 100%;
+            background: -webkit-linear-gradient(to right, #8E54E9, #4776E6);
+            background: -moz-linear-gradient(to right, #8E54E9, #4776E6);
+            background: -o-linear-gradient(to right, #8E54E9, #4776E6);
+            background: linear-gradient(to right, #8E54E9, #4776E6);
+            transition: all 4s;
+        }
+
+        @keyframes tapDownload {
+            0% {
+                transform: translateY(2px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        i {
+            margin: 0 8px 0 0;
+            font-size: 16px;
+            z-index: 10;
+        }
+
+        .fa-arrow-down {
+            animation: tapDownload 1s ease infinite;
+        }
+
+        @keyframes downloading {
+            0% {
+                transform: scale(0.7);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .fa-download {
+            animation: downloading 0.5s ease infinite alternate-reverse;
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <div class="button">
+        <i class="fa fa-arrow-down" aria-hidden="true"></i>
+        <!-- <i class="fa fa-download" aria-hidden="true"></i>
+        <i class="fa fa-check" aria-hidden="true"></i> -->
+        <span class="text">download</span>
+        <span class="progress"></span>
+    </div>
+    <script type="text/javascript">
+        const btn = document.querySelectorAll(".button")[0]
+        const text = document.querySelectorAll(".text")[0]
+        const progress = document.querySelectorAll(".progress")[0]
+        const icon = document.querySelectorAll(".fa")[0]
+
+        btn.addEventListener("click", () => {
+            // 下载完成
+            setTimeout(() => {
+                progress.style.top = 0
+                progress.style.transition = "all 1s"
+                btn.style.color = "#fff"
+                text.innerText = "downloaded"
+                icon.classList.remove("fa-download")
+                icon.classList.add("fa-check")
+            }, 4000);
+            // 下载中
+            progress.style.left = 0
+            icon.classList.remove("fa-arrow-down")
+            icon.classList.add("fa-download")
+            text.innerText = "downloading"
+        })
+    </script>
+</body>
+
+</html>
