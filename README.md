@@ -1,4 +1,4 @@
-# JSTreasure
+# webTreasure
 前端宝典
 # git测试
 * 第二人提交
