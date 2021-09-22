@@ -67,3 +67,37 @@ class A extends React.Component{
 1. state
 2. props
 3. refs
+---
+## refs
+1. 字符串形式的 ref
+
+    * `已不建议使用，将来会废弃`
+```
+<input ref="input1" />
+```
+1. 回调形式的 ref
+
+   * `内联式每次刷新控件会调用两次，先传null，再传dom;`
+
+   * `class类绑定式则不会多次调用`
+```
+<input ref={(c) => {this.input1 = c}}/>
+或
+setTextInputRef = c => {
+    this.textInput = c
+}
+<input ref={this.setTextInputRef}/>
+```
+3. createRef 创建 ref 容器
+
+   * `React.createRef调用后可以返回一个容器，该容器可以存储被ref所标识的节点，该容器是“专人专用”的`
+```
+myRef = React.createRef()
+<input ref={this.myRef}>
+```
+---
+## 事件处理
+1. 通过onXxx属性指定事件处理函数（注意大小写）
+   * React使用的是自定义（合成）事件，而不是使用的原生DOM事件 —— 为了更好的兼容性
+   * React中的事件是通过事件委托方式处理的（委托给组件最外层的元素） —— 为了高效
+2. 通过event.target得到发生事件的DOM元素对象 —— 不要过度使用ref
