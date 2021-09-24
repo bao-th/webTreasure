@@ -1,3 +1,4 @@
+//#region 
 for (const key in object) {
     if (Object.hasOwnProperty.call(object, key)) {
         const element = object[key];
@@ -15,3 +16,4 @@ Object.defineProperty(a, 'a', {
 })
 console.log(a);
 Object.defineProperties()
+//#endregion
