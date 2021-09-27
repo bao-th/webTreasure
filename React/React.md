@@ -138,10 +138,10 @@ myRef = React.createRef()
 ### 定义
 
 1. 组件从创建到死亡它会经历一些特定的阶段
-2. React 组件中包含一系列钩子函数（生命周期回调函数），会在特定的时刻调用
+2. React 组件中包含一系列勾子函数（生命周期回调函数），会在特定的时刻调用
 3. 我们在定义组件时，会在特定的生命周期回调函数中，做特定的工作
 
-### 三个阶段（旧-16及以下）
+### 三个阶段（旧-16 及以下）
 
 1. 初始化阶段：由 ReactDOM.render()触发--初次渲染
 
@@ -150,7 +150,7 @@ myRef = React.createRef()
    3. render()
    4. componentDidMount() =====> 常用
 
-      `一般在这个钩子中做一些初始化的事，例如：开启定时器、发送网络请求、订阅消息`
+      `一般在这个勾子中做一些初始化的事，例如：开启定时器、发送网络请求、订阅消息`
 
 2. 更新阶段：由组件内部 this.setState()或父组件重新 render 触发
 
@@ -173,9 +173,10 @@ myRef = React.createRef()
 
    1. componentWillUnmount() =====> 常用
 
-      `一般在这个钩子中做一些收尾的事，例如：关闭定时器、取消订阅消息`
+      `一般在这个勾子中做一些收尾的事，例如：关闭定时器、取消订阅消息`
 
 ```
+<!-- 例 -->
 class A extends React.Component {
    /**
    * 初始化阶段
@@ -206,3 +207,94 @@ class A extends React.Component {
 }
 
 ```
+
+### 三个阶段（新-17 及以上）
+
+1. 初始化阶段：由 ReactDOM.render()触发--初次渲染
+
+   1. constructor()
+   2. getDerivedStateFromProps （UNSAFE_componentWillMount() --兼容--未来废弃）
+   3. render()
+   4. componentDidMount() =====> 常用
+
+      `一般在这个勾子中做一些初始化的事，例如：开启定时器、发送网络请求、订阅消息`
+
+2. 更新阶段：由组件内部 this.setState()或父组件重新 render 触发或 forceUpdate()
+
+   1. getDerivedStateFromProps（UNSAFE_componentWillReceiveProps() --兼容--未来废弃）
+
+   2. shouldComponentUpdate()
+   3. （UNSAFE_componentWillUpdate() --兼容--未来废弃）
+   4. render()
+   5. componentDidUpdate()
+
+3. 卸载组件：由 ReactDOM.unmountComponentAtNode()触发
+
+   1. componentWillUnmount() =====> 常用
+
+      `一般在这个勾子中做一些收尾的事，例如：关闭定时器、取消订阅消息`
+
+```
+<!-- 例 -->
+class A extends React.Component {
+   /**
+   * 初始化阶段
+   */
+  constructor(props) {                            //构造函数
+    super(props);
+    this.state = {};
+  }
+  static getDerivedStateFromProps(props, state) { //获取派生状态
+    return props || null
+  }
+  render() {}                                     //渲染
+  componentDidMount() {}                          //挂载后
+
+  /**
+   * 更新阶段
+   */
+  static getDerivedStateFromProps()                //获取派生状态
+  shouldComponentUpdate() {                        //是否可以更新
+    return true || false;
+  }
+  render(){}                                       //渲染
+  getSnapshotBeforeUpdate(prevProps, prevState){   //获取快照
+    return this.refs.list.scrollHeight
+  }
+  componentDidUpdate(prevProps, prevState, height) //更新后，第三个参数为返回的快照
+
+  /**
+   * 卸载阶段
+   */
+  componentWillUnmount(){} //卸载前
+}
+
+```
+
+### 重要的钩子
+
+1. render：初始化渲染或更新渲染使用
+2. componentDidMount：开启监听、发送 ajax 请求
+3. componentWillUnmount：做一些收尾工作，如：清理定时器
+
+### 即将废弃的勾子
+
+1. componentWillMount()
+2. componentWillReceiveProps()
+3. componentWillUpdate()
+
+   `现在使用会出现警告，下一大版本需要加上UNSAFE_前缀才能使用，以后可能会被彻底废弃，不建议使用`
+
+## 新增的勾子
+
+1. getDerivedStateFromProps() //从 props 中获取派生的 state
+
+   - `若state的值在任何时候都取决于props，那么可以使用这个勾子`
+   - `静态方法，需加static`
+   - `参数为props、state`
+   - `返回状态对象或null，不可以返回undefined`
+
+2. getSnapshotBeforeUpdate() //在更新前后去快照，
+
+   - `参数：prevProps、prevState`
+   - `任何返回值将作为参数传递给 componentDidUpdate()`
