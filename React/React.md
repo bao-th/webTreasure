@@ -285,7 +285,7 @@ class A extends React.Component {
 
    `现在使用会出现警告，下一大版本需要加上UNSAFE_前缀才能使用，以后可能会被彻底废弃，不建议使用`
 
-## 新增的勾子
+### 新增的勾子
 
 1. getDerivedStateFromProps() //从 props 中获取派生的 state
 
