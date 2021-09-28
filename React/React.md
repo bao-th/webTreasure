@@ -16,7 +16,7 @@
 
 ## JSX
 
-- JacaScript XML
+- JavaScript XML
 - React.createElement(component, props, child)的语法糖
 - 用来创建虚拟 Dom
 - 语法规则
@@ -93,6 +93,10 @@ class A extends React.Component{
 1. 字符串形式的 ref
 
    - `已不建议使用，将来会废弃`
+
+   - `由于它无法知道this，所以需要React去跟踪当前渲染的组件。这使得React变得比较慢`
+
+   - `string类型的refs写法在函数组件中会让ref被放置在父DOM中，而不是父组件实例中`
 
 ```
 <input ref="input1" />
