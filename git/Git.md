@@ -33,4 +33,4 @@ git chekcout -- <file>
 ## 查看
 - git status                  //查看当前状态
 - git log                     //查看zuijin3次提交，按q退出
-- git --pretty=oneline        //查看单行提交记录
+- git log --pretty=oneline        //查看单行提交记录
