@@ -302,3 +302,74 @@ class A extends React.Component {
 
    - `参数：prevProps、prevState`
    - `任何返回值将作为参数传递给 componentDidUpdate()`
+
+---
+
+## Diff
+
+1. 虚拟 DOM 中 key 的作用：
+   - 简单的说：key 是虚拟 DOM 对象的标识，在更新显示时 key 起着极其重要的作用。
+   - 详细的说：当状态中的数据发生变化时，react 会根据【新数据】生成【新的虚拟 DOM】，随后 react 进行【新虚拟 DOM】与【旧虚拟 DOM】的 diff 比较，比较规则如下：
+     - key 相同：
+       1. 若虚拟 DOM 中内容没变，直接使用之前的真实 DOM
+       2. 若虚拟 DOM 中内容变了，则生成新的真实 DOM，随后替换掉页面中之前的真是 DOM
+     - key 不同：
+       根据数据创建新的真实 DOM，随后渲染到页面
+2. 用 index 作为 key 可能会引发的问题
+   - 若对数据进行：逆序添加、逆序删除等破坏顺序操作：会产生没有必要的真实 DOM 更新 ==> 界面效果没问题，但效率低
+   - 如果结构中还包含输入类 DOM：会产生错误 DOM 更新 ==> 界面有问题
+   - 注意！如果不存在对数据的逆序添加、逆序删除等破坏顺序操作，仅用于渲染列表用于展示，使用 index 作为 key 是没有问题的
+
+---
+
+## react 脚手架
+
+1. npm i -g create-react-app
+2. create-react-app hello-react
+3. cd hello-react
+4. npm start
+
+```
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- %PUBLIC_URL%代表public文件夹的路径 -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <!-- 开启理想视口，用于做移动端网页的适配 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 用于配置浏览器页签+地址栏的颜色（仅支持安卓手机浏览器） -->
+    <meta name="theme-color" content="red" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <!-- 用于指定网页添加到手机主屏幕后的图标 -->
+    <link rel="app-touch-icon" href="%PUBLIC_URL%/logo192.ico" />
+    <!-- 应用加壳时的配置文件 -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>React App</title>
+  </head>
+  <body>
+    <!-- 若浏览器不支持js则展示标签中的内容 -->
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+```
+
+---
+
+## 样式模块化
+
+1. 样式文件名：index.module.css
+2. 引入：import hello from './index.module.css'
+3. className={hello.title}
+
+---
+
+## 插件
+
+`ES7 React/Redux/GraphQL/`
