@@ -374,6 +374,8 @@ class A extends React.Component {
 
 `ES7 React/Redux/GraphQL/`
 
+---
+
 ## 脚手架配置代理
 
 ### 方法一
@@ -423,3 +425,49 @@ module.exports = function(app){
 
 1. 优点：可以配置多个代理，可以灵活的控制请求是否走代理。
 2. 缺点：配置繁琐，前端请求资源时必须加前缀。
+
+---
+
+## 消息订阅-发布机制
+
+1. 工具库：PubSubJS
+2. 下载：npm install pubsub-js --save
+3. 使用：
+   - import PubSub from 'pubsub-js'//引入
+   - PubSub.subscribe('delete', function(data){})//订阅
+   - PubSub.publish('delete', data)//发布消息
+
+### 注意：
+
+1. 先订阅，再发布（理解：有一种隔空对话的感觉）
+2. 适用于任意组件间通信
+3. 要在组件的 componentWillUnmount 中取消订阅
+
+---
+
+## Fetch
+
+`关注分离的设计思想`
+
+1. fetch：原生函数，不再使用 XmlHttpRequest 对象提交 ajax 请求
+2. 老版本浏览器可能不支持
+
+```
+fetch(url).then(function(response){
+   return response.json()
+}).then(function(data){
+   console.log(data)
+}).catch(function(err){
+   console.log('err',err)
+})
+<!-- 或 -->
+try {
+   const response = await fetch(`/api/search/use2?q=${keyWord}`)
+   const data = await response.json()
+   console.log(data)
+} catch (error) {
+   console.log('请求出错', error)
+}
+```
+
+---
