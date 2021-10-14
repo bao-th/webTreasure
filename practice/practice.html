@@ -1,33 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <script>
         class A {
 
-            state = {a:'',b:''} //实例上，实例对象可以找到
+            state = { a: '', b: '' } //实例上，实例对象可以找到
 
             static type = 'bth' //类本身上，类可以找到
 
-            func = ()=>{} //实例上，实例对象可以找到
+            func = () => { } //实例上，实例对象可以找到
 
-            render(){} //原型上，实例对象可以找到
+            render() { } //原型上，实例对象可以找到
 
         }
         const a = new A()
         console.log(a)
-        console.log('A.state',A.state)
-        console.log('A.type',A.type)
-        console.log('A.render',A.render)
-        console.log('a.state',a.state)
-        console.log('a.type',a.type)
-        console.log('a.render',a.render)
-        console.log('a.func',a.func)
+                console.log('A.state', A.state)
+                console.log('A.type', A.type)
+                console.log('A.render', A.render)
+                console.log('a.state', a.state)
+                console.log('a.type', a.type)
+                console.log('a.render', a.render)
+                console.log('a.func', a.func)
+            </script>
+        
+        <!-- 路由 -->
+        <script type="text/javascript">
+            let history = History.createBrowserHistory()//方法一，直接使用H5推出的history身上的API
+            let history = History.createHashHistory()// 方法二。hash值（锚点）
+            function push(path) {
+                history.push(path)
+                return false
+            }
+            function replace(path) {
+                history.replace(path)
+            }
+            function back() {
+                history.goBack()
+            }
+            function forward() {
+                history.goForward()
+            }
     </script>
 </body>
+
 </html>
