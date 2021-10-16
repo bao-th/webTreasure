@@ -2,13 +2,15 @@
 
 `yarn add antd`
 
-## antd的按需引入+自定义主题
+## antd 的按需引入+自定义主题
+
 1. 安装依赖：
-    - 按需引入：`yarn add react-app-rewired customize-cra babel-plugin-import`
-        - react-app-rewired：一个对 create-react-app 进行自定义配置的社区解决方案
-        - babel-plugin-import：是一个用于按需加载组件代码和样式的 babel 插件
-    - 自定义主题：`less less loader`
-2. 修改package.json
+   - 按需引入：`yarn add react-app-rewired customize-cra babel-plugin-import`
+     - react-app-rewired：一个对 create-react-app 进行自定义配置的社区解决方案
+     - babel-plugin-import：是一个用于按需加载组件代码和样式的 babel 插件
+   - 自定义主题：`less less loader`
+2. 修改 package.json
+
 ```
 ···
 "scripts": {
@@ -19,7 +21,9 @@
 }
 ···
 ```
-3. 根目录下创建config-overrides.js
+
+3. 根目录下创建 config-overrides.js
+
 ```
 <!-- 配置具体的修改规则 -->
 const {override, fixBabelImports, addLessLoader} = require('customize-cra');
@@ -42,4 +46,5 @@ module.exports = override(
     }),
 );
 ```
+
 4. 备注：不用在组件里亲自引入样式了，即：import 'antd/dist/antd.css'应该删掉
