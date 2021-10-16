@@ -11,7 +11,7 @@ components
 # Node系列
 Node
 # React
-React框架系列
+React框架系列，router、antd、redux、react-redux
 # 其他
 others，混杂知识点
 # 练习代码
