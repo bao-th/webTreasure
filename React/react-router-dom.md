@@ -1,13 +1,13 @@
-## 路由
+# 路由
 
 `npm install --save react-router-dom`
 
-### 一. 什么是路由？
+## 一. 什么是路由？
 
 1. 一个路由就是一个映射关系(key:value)
 2. key 为路径，value 可能是 function 或 component
 
-### 二. 路由分类
+## 二. 路由分类
 
 1. 后端路由：
    - 理解：value 是 function，用来处理客户端提交的请求
@@ -18,7 +18,7 @@
    - 注册路由：`<Route path="/test" component={Test}>`
    - 工作过程：当浏览器的 path 变为/test 时，当前路由组件就会变为 Test 组件
 
-### 三. 基本使用
+## 三. 基本使用
 
 1. 明确好界面中的导航区、展示区
 2. 导航区的 a 标签改为 Link 标签`<Link to="/xxx">Demo</Link>`
@@ -45,7 +45,7 @@
 </script>
 ```
 
-### 四. 路由组件与一般组件
+## 四. 路由组件与一般组件
 
 1. 写法不同：
    - 一般组件：`<Demo/>`
@@ -73,30 +73,30 @@
          url: "/about"
    ```
 
-### 五. NavLink 与封装 NavLink
+## 五. NavLink 与封装 NavLink
 
 1. NavLink 可以实现路由链接得高亮，通过 activeClassName 指定样式名
 2. 标签体内容是一个特殊的标签属性(children)
 3. 通过 this.props.children 可以获取标签体内容
 
-### 六. Switch 的使用
+## 六. Switch 的使用
 
 1. 通常情况下，path 和 component 是一一对应的关系
 2. Switch 可以提高路由匹配效率(单一匹配)
 
-### 七. 解决多级路径刷新页面样式丢失的问题
+## 七. 解决多级路径刷新页面样式丢失的问题
 
 1. public/index.html 中引入样式时不写 ./ 写 / (常用)
 2. public/index.html 中引入样式时不写 ./ 写 %PUBLIC_URL% (常用)
 3. 使用 HashRouter
 
-### 八. 路由的严格匹配与模糊匹配
+## 八. 路由的严格匹配与模糊匹配
 
 1.  默认使用的是模糊匹配（简单记：【输入的路径】必须包含要【匹配的路径】，且顺序要一致）
 2.  开启严格匹配，`<Route exact={true} path="/about" component={About} />`
 3.  严格匹配不要随便开启，需要时再开，有些时候开启会导致无法继续匹配二级路由
 
-### 九. Redirect 的使用
+## 九. Redirect 的使用
 
 1.  一般写在所有路由注册的最下方，当所有路由都无法匹配时，跳转到 Redirect 指定的路由
 2.  具体编码：
@@ -108,12 +108,12 @@
     </Switch>
     ```
 
-### 十. 嵌套路由
+## 十. 嵌套路由
 
 1.  注册子路由时要写上父路由的 path 值
 2.  路由的匹配是按照注册路由的顺序进行的
 
-### 十一. 向路由组件传递参数
+## 十一. 向路由组件传递参数
 
 1.  params 参数
     - 路由链接(携带参数)：`<Link to='/demo/test/tom/18'>详情</Link>`
@@ -130,7 +130,7 @@
     - 接收参数：this.props.location.state
     - 备注：刷新也能保留住参数
 
-### 十二. 编程式路由导航
+## 十二. 编程式路由导航
 
 - 借助 this.props.history 对象上的 API 对操作路由跳转、前进、后退
   - this.props.history.push()
@@ -139,7 +139,7 @@
   - this.props.history.goForward()
   - this.props.history.go()
 
-### 十三. withRouter
+## 十三. withRouter
 
 - 可以加工一般组件，让一般组件具备路由组件所特有的 API
 - 返回值是一个新组件
@@ -162,7 +162,7 @@ class Header extends Component {
 export default withRouter(Header)
 ```
 
-### 十四. BrowserRouter 与 HashRouter 的区别
+## 十四. BrowserRouter 与 HashRouter 的区别
 
 1.  底层原理一样：
     - BrowserRouter 使用的是 H5 的 history API，不兼容 IE9 及以下版本。
@@ -177,7 +177,7 @@ export default withRouter(Header)
 
 ---
 
-## 代码展示
+## 十五. 代码展示
 
 ```
 <BrowserRouter>
