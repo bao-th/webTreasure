@@ -162,7 +162,7 @@ myRef = React.createRef()
 
       `父组件触发，第一次不触发，只在更新阶段触发，componentWillReceiveNewProps`
 
-   2. shouldComponentUpdate()
+   2. shouldComponentUpdate(nextProps,nextState)
 
       `setState()触发`
 
@@ -197,7 +197,7 @@ class A extends React.Component {
    * 更新阶段
    */
   componentWillReceiveProps(props) {} //将接收参数
-  shouldComponentUpdate() {           //是否可以更新
+  shouldComponentUpdate(nextProps,nextState) {           //是否可以更新
     return true || false;
   }
   componentWillUpdate(){}             //更新前
@@ -227,7 +227,7 @@ class A extends React.Component {
 
    1. getDerivedStateFromProps（UNSAFE_componentWillReceiveProps() --兼容--未来废弃）
 
-   2. shouldComponentUpdate()
+   2. shouldComponentUpdate(nextProps,nextState)
    3. （UNSAFE_componentWillUpdate() --兼容--未来废弃）
    4. render()
    5. componentDidUpdate()
@@ -258,7 +258,7 @@ class A extends React.Component {
    * 更新阶段
    */
   static getDerivedStateFromProps()                //获取派生状态
-  shouldComponentUpdate() {                        //是否可以更新
+  shouldComponentUpdate(nextProps,nextState) {                        //是否可以更新
     return true || false;
   }
   render(){}                                       //渲染
@@ -471,3 +471,201 @@ try {
 ```
 
 ---
+
+## 打包项目
+
+`本地启动一个服务器，运行打包后的项目`
+
+```
+npm run build
+npm i serve -g
+serve build
+```
+
+---
+
+# React 扩展
+
+## setState
+
+### setState 更新状态的 2 种方法
+
+1. setState(stateChange,[callback]) ---- 对象式的 setState
+   - stateChange 为状态改变对象（该对象可以体现出状态的更改）
+   - callback 是可选的回调函数，它在状态更新完毕，界面也更新后（render 调用后）才被调用
+2. setState(updater,[callback]) ---- 函数式的 setState
+   - updater 为返回 stateChange 对象的函数
+   - updater 可以接收到 state 和 props
+   - callback 是可选的回调函数，它在状态更新完毕，界面也更新后（render 调用后）才被调用
+   ```
+   this.setState(state=>({count:state.count+1}))
+   ```
+3. 总结：
+   - 对象式的 setState 是函数式的 setState 的简写方式（语法糖）
+   - 使用原则：
+     - 如果新状态不依赖于原来的状态 ===> 使用对象方式
+     - 如果新状态依赖于原来的状态 ===> 使用函数方式
+     - 如果需要在 setState()执行后获取最新的状态数据，要在第二个 callback 函数中使用
+
+---
+
+## lazyLoad
+
+### 路由组件的 lazyLoad
+
+```js
+//1.通过React的lazy函数配合import函数动态加载路由组件 ===> 路由组件代码会被分开打包
+const Login = lazy(()=>import('@/pages/Login'))
+//2.通过<Suspence>指定在加载得到路由打包文件前显示一个loading界面
+<Suspence fallback={<h1>loading...</h1>}>
+   <Switch>
+      <Route path="/xxx" component={Xxxx}/>
+      <Redirect to="/login"/>
+   </Switch>
+</Suspence>
+```
+
+---
+
+## Hooks
+
+1. React Hook/Hooks 是什么?
+   - Hook 是 React 16.8.0 版本增加的新特性/新语法
+   - 可以让你在函数组件中使用 state 以及其他的 React 特性
+2. 三个常用的 Hook
+   - State Hook: React.useState()
+   - Effect Hook: React.useEffect()
+   - Ref Hook: React.useRef()
+3. State Hook
+
+```
+(1). State Hook让函数组件也可以有state状态, 并进行状态数据的读写操作
+(2). 语法: const [xxx, setXxx] = React.useState(initValue)
+(3). useState()说明:
+        参数: 第一次初始化指定的值在内部作缓存
+        返回值: 包含2个元素的数组, 第1个为内部当前状态值, 第2个为更新状态值的函数
+(4). setXxx()2种写法:
+        setXxx(newValue): 参数为非函数值, 直接指定新的状态值, 内部用其覆盖原来的状态值
+        setXxx(value => newValue): 参数为函数, 接收原本的状态值, 返回新的状态值, 内部用其覆盖原来的状态值
+```
+
+4. Effect Hook
+
+```
+(1). Effect Hook 可以让你在函数组件中执行副作用操作(用于模拟类组件中的生命周期钩子)
+(2). React中的副作用操作:
+        发ajax请求数据获取
+        设置订阅 / 启动定时器
+        手动更改真实DOM
+(3). 语法和说明:
+        useEffect(() => {
+          // 在此可以执行任何带副作用操作
+          return () => { // 在组件卸载前执行
+            // 在此做一些收尾工作, 比如清除定时器/取消订阅等
+          }
+        }, [stateValue]) // 如果指定的是[], 回调函数只会在第一次render()后执行
+
+(4). 可以把 useEffect Hook 看做如下三个函数的组合
+        componentDidMount()
+        componentDidUpdate()
+    	componentWillUnmount()
+```
+
+5. Ref Hook
+
+```
+(1). Ref Hook可以在函数组件中存储/查找组件内的标签或任意其它数据
+(2). 语法: const refContainer = useRef()
+(3). 作用:保存标签对象,功能与React.XXX()一样
+```
+
+---
+
+## Fragment
+
+### 使用
+
+    //只能key和children两个属性
+    <Fragment key='1' children={}><Fragment>
+    <></>
+
+### 作用
+
+> 可以不用必须有一个真实的 DOM 根标签了
+
+---
+
+## Context
+
+### 理解
+
+> 一种组件间通信方式, 常用于【祖组件】与【后代组件】间通信
+
+### 使用
+
+```js
+1) 创建Context容器对象：
+	const XxxContext = React.createContext()
+
+2) 渲染子组时，外面包裹xxxContext.Provider, 通过value属性给后代组件传递数据：
+	<xxxContext.Provider value={数据}>
+		子组件
+    </xxxContext.Provider>
+
+3) 后代组件读取数据：
+
+	//第一种方式:仅适用于类组件
+	  static contextType = xxxContext  // 声明接收context
+	  this.context // 读取context中的value数据
+
+	//第二种方式: 函数组件与类组件都可以
+	  <xxxContext.Consumer>
+	    {
+	      value => ( // value就是context中的value数据
+	        要显示的内容
+	      )
+	    }
+	  </xxxContext.Consumer>
+```
+
+### 注意
+
+    在应用开发中一般不用context, 一般都它的封装react插件
+
+---
+
+## 组件优化
+
+### Component 的 2 个问题
+
+> 1. 只要执行 setState(),即使不改变状态数据, 组件也会重新 render()
+>
+> 2. 只当前组件重新 render(), 就会自动重新 render 子组件 ==> 效率低
+
+### 效率高的做法
+
+> 只有当组件的 state 或 props 数据发生改变时才重新 render()
+
+### 原因
+
+> Component 中的 shouldComponentUpdate()总是返回 true
+
+### 解决
+
+    办法1:
+    	重写shouldComponentUpdate()方法
+    	比较新旧state或props数据, 如果有变化才返回true, 如果没有返回false
+    办法2:
+    	使用PureComponent
+    	PureComponent重写了shouldComponentUpdate(), 只有state或props数据有变化才返回true
+    	注意:
+    		只是进行state和props数据的浅比较, 如果只是数据对象内部数据变了, 返回false
+    		不要直接修改state数据, 而是要产生新数据
+    项目中一般使用PureComponent来优化
+```
+shouldComponentUpdate(nextProps,nextState){
+   console.log(this.props,this.state); //目前的props和state
+   console.log(nextProps,nextState); //接下要变化的目标props，目标state
+   return !this.props.carName === nextProps.carName
+}
+```
