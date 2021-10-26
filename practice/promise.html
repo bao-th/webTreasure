@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- <script>
+      function rand(m, n) {
+        return Math.ceil(Math.random() * (n - m + 1)) + m - 1;
+      }
+      const p = new Promise((resolve, reject) => {
+        //同步调用
+        setTimeout(() => {
+          let n = rand(1, 100);
+          if (n <= 30) {
+            resolve(n);
+          } else {
+            reject(n);
+          }
+        }, 1000);
+      });
+
+      //调用then
+      p.then(
+        (value) => {
+          alert("恭喜中奖" + value);
+        },
+        (reason) => {
+          alert("再接再厉" + reason);
+        }
+      );
+    </script>
+
+    <script>
+      function sendAJAX(url) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", url);
+          xhr.send();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.response);
+              } else {
+                reject(xhr.status);
+              }
+            }
+          };
+        });
+      }
+    //   sendAJAX("https://www.baidu.com").then(
+    //     (value) => console.log(value),
+    //     (reason) => console.log(reason)
+    //   );
+    </script>
+
+    <script>
+      const p1 = Promise.reject("ok");
+      const p2 = Promise.resolve("oh");
+      const p3 = Promise.all([p1, p2]);
+      console.log(p3);
+    </script> -->
+
+    <!-- 手写promise -->
+    <script src="./promise.js"></script>
+    <script>
+      let p = new Promise((resolve, reject) => {
+        // resolve("ok");
+        // reject("error");
+        //抛出异常
+        // throw "Error";
+        // 异步
+        setTimeout(() => {
+          //   resolve("ok-1000");
+          reject("error");
+        }, 1000);
+      });
+
+      const res = p.then(
+        (value) => {
+          console.log(value);
+          // return "hello";
+          return new Promise((resolve, reject) => {
+            // resolve("success");
+            reject("fail");
+          });
+          //抛出异常
+          //   throw "FAIL";
+        },
+        (reason) => {
+          console.warn(reason);
+          //抛出异常
+          throw "FAIL";
+        }
+      );
+      //   p.then(
+      //     (value) => alert(value),
+      //     (reason) => alert(reason)
+      //   );
+      //   console.log(p);
+      //   console.log(res);
+
+      const res1 = p.catch((reason) => console.warn(reason));
+      console.log(res1);
+    </script>
+    <!-- async-await -->
+    <button id="btn">段子</button>
+    <script>
+      function sendAJAX(url) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", url);
+          xhr.send();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.response);
+              } else {
+                reject(xhr.status);
+              }
+            }
+          };
+        });
+      }
+
+      let btn = document.querySelector("#btn");
+      btn.addEventListener("click", async function () {
+        let duanzi = await sendAJAX("https://api.apiopen.top/getJoke");
+        console.log(duanzi);
+      });
+    </script>
+  </body>
+</html>
