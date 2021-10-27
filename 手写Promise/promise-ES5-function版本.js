@@ -67,6 +67,8 @@ Promise.prototype.then = function (onResolved, onRejected) {
             (v) => resolve(v),
             (r) => reject(r)
           );
+          //简写
+          // result.then(resolve, reject);
         } else {
           //结果的对象状态为成功
           resolve(result);
@@ -132,7 +134,8 @@ Promise.all = function (promises) {
     let count = 0;
     //遍历
     for (let i = 0; i < promises.length; i++) {
-      promises[i].then(
+      //当promises[i]不为Promise时，使用Promise.resolve()
+      Promise.resolve(promises[i]).then(
         (v) => {
           count++;
           arr[i] = v;
@@ -141,6 +144,7 @@ Promise.all = function (promises) {
           }
         },
         (r) => {
+          //只要一个失败了，return的promise就失败
           reject(r);
         }
       );
@@ -153,7 +157,8 @@ Promise.race = function (promises) {
   return new Promise((resolve, reject) => {
     //遍历
     for (let i = 0; i < promises.length; i++) {
-      promises[i].then(
+      //当promises[i]不为Promise时，使用Promise.resolve()
+      Promise.resolve(promises[i]).then(
         (v) => {
           resolve(arr);
         },
@@ -162,5 +167,27 @@ Promise.race = function (promises) {
         }
       );
     }
+  });
+};
+
+//指定时间后确定结果
+Promise.resolveDelay = function (value, time) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (value instanceof Promise) {
+        value.then(resolve, reject);
+      } else {
+        resolve(value);
+      }
+    }, time);
+  });
+};
+
+//指定时间后才失败
+Promise.rejectDelay = function (reason, time) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(reason);
+    }, time);
   });
 };

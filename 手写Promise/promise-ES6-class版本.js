@@ -164,4 +164,26 @@ class Promise {
       }
     });
   }
+
+  //指定时间后确定结果
+  static resolveDelay(value, time) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (value instanceof Promise) {
+          value.then(resolve, reject);
+        } else {
+          resolve(value);
+        }
+      }, time);
+    });
+  }
+
+  //指定时间后才失败
+  static rejectDelay(reason, time) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject(reason);
+      }, time);
+    });
+  }
 }
