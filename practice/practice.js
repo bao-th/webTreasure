@@ -35,3 +35,15 @@ class A extends React.Component {
   // 卸载前
   componentWillUnmount()
 }
+
+
+function fun(a, b) {
+  console.log(Array.prototype.slice.apply(arguments));
+}
+fun(1, 2);
+
+[1,2,3].reduce((total,item,index,arr)=>{
+  console.log(total);
+  return total+=item;
+  
+})

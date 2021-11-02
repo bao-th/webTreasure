@@ -930,7 +930,7 @@ Object.isFrozen(a) // true/false
 let a = 1, b = 2
 a ^ a == 0
 a ^ 0 == a
-// 满足交换律、结合律
+// 满足交换律、结合律m 
 a ^ b ^ a == b ^ a ^ a == b ^ (a ^ a) == b ^ 0 == b
 
 // ? HTML
