@@ -54,10 +54,54 @@
 1. JS 中函数可以作为值使用，是一个基本的语法规则
 2. JS 中函数本身的作用域在声明的地方，与在哪个地方调用，没有关系
 
-### 闭包（闭合的数据包）
+### 作用域
 
-- 产生条件：一个函数中返回一个函数
-- 定义：因为垃圾回收机制不会破坏基本语法规则，所以父函数中被子函数引用的变量、及子函数都不会回收，全局作用域又引用不到这些数据，所以这些数据就形成一个闭合的数据包
+- JS 中函数本身的作用域在声明的地方，与在哪个地方调用，没有关系
+
+### 执行上下文
+
+- (execute context) EC
+- 理解：代码执行的环境
+- 时机：代码正式执行之前会进入到执行环境
+- 工作：
+  1.  创建一个变量对象：
+      - 变量
+      - 函数及函数的参数
+      - 全局：window
+      - 局部：抽象的但确实存在
+  2.  确认 this 的指向
+      - 全局：this ---> window
+      - 局部：this ---> 调用其的对象
+  3.  创建作用域链
+      - 父级作用域链 + 当前的变量对象
+  4.  扩展：
+      ```
+      ECObj = {
+        变量对象：{变量，函数，函数的形成}
+        scopeChain：父级作用域链 + 当前的变量对象，
+        this：{window || 调用其的对象}
+      }
+      ```
+
+### 闭包 closure（闭合的数据包）
+
+1. 理解
+   - 什么是闭包?
+     1. 密闭的容器，类似于 set，map 容器，存储数据的
+     2. 闭包是一个对象，存放数据的格式：key：value
+   - 形成的条件：
+     1. 函数嵌套
+     2. 内部函数引用外部函数的局部变量
+   - 优点：
+     1. 延长外部函数局部变量的生命周期
+   - 缺点：
+     1. 容易造成内存泄漏
+   - 注意点：
+     1. 合理使用闭包
+     2. 用完闭包要及时清除（销毁）
+2. 个人理解：
+   - 常用方式：一个函数中返回一个函数
+   - 定义：因为垃圾回收机制不会破坏基本语法规则，所以父函数中被子函数引用的变量、及子函数都不会回收，全局作用域又引用不到这些数据，所以这些数据就形成一个闭合的数据包
 
 ### 回调函数
 
@@ -69,6 +113,53 @@
 2. 异步回调
    - 理解：不会立即执行，会放入回调队列中将来执行
    - 例子：定时器回调、ajax 回调、Promise 的成功|失败的回调
+
+### 节流与防抖
+
+1. 节流函数：一个函数执行一次后，只有大于设定的执行周期后才会执行第二次
+
+   - 有个需要频繁触发函数，处于性能角度，在规定时间内，只让函数触发的第一次生效，后面不生效
+   - 屏幕滚动事件
+
+   ```js
+   /**
+    * @param fn 要被节流的函数
+    * @param delay 规定的时间
+    */
+   function throttle(fn, delay) {
+     //记录上一次函数触发的时间
+     var lastTime = 0;
+     return function () {
+       var nowTime = Date.now();
+       if (nowTime - lastTime > delay) {
+         //修正this指向
+         fn.call(this);
+         //同步时间
+         lastTime = nowTime;
+       }
+     };
+   }
+   ```
+
+2. 防抖函数
+
+   - 一个需要频繁触发的函数，在规定时间内，只让最后一次生效，前面的不生效
+   - 连续点击、输入事件
+
+   ```js
+   function debounce(fn, delay) {
+     //记录上一次延时器
+     let timer = null;
+     return function () {
+       //清除上一次延时器
+       clearTimeout(timer);
+       //重新设置新的延时器
+       timer = setTimeout(function () {
+         fn.apply(this);
+       }, delay);
+     };
+   }
+   ```
 
 ---
 
@@ -92,11 +183,42 @@
 ## JS 异步之宏队列与微队列
 
 1. JS 中用来存储待执行回调函数的队列包含 2 个不同特定的队列
-2. 宏队列：用来保存待执行的宏任务（回调），比如：`定时器回调/DOM事件回调/ajax回调`
-3. 微队列：用来保存待执行的微任务（回调），比如：`promise回调/MutationObserver回调`
+2. 宏队列：用来保存待执行的宏任务（回调），比如：`定时器回调/DOM事件回调/ajax回调/requestAnimationFrame`
+   - 第一个宏任务队列只有一个任务：执行主线程的 js 代码
+   - 宏任务队列可以有多个
+3. 微队列：用来保存待执行的微任务（回调），比如：`new Promise().then(回调)/MutationObserver回调/process nextTick`
+   - 只有一个微任务队列
+   - 在上一个宏任务队列执行完毕后如果有微任务队列就会执行微任务队列中的所有任务
 4. JS 执行时会区别这 2 个队列
    - JS 引擎首先必须先执行所有的初始化同步任务代码
    - 每次准备取出第一个宏任务执行前，都要将所有的微任务一个一个取出来执行
+
+---
+
+## nodejs 的事件轮询机制
+
+- 借助 libuv 库实现
+- 概括事件轮询机制，分为 6 个阶段：
+
+1. timers 定时器阶段
+   - 计时和执行到点的定时器回调函数
+2. pending callbacks
+   - 某些系统操作（例如 TCP 错误类型）的回调函数
+3. idle prepare
+   - 准备工作
+4. poll 轮询阶段 （轮询队列）
+   - 如果轮询队列不为空，依次同步取出轮询队列中第一个回调函数执行，直到轮询队列为空或者达到系统最大的限制
+   - 如果轮询队列为空
+     - 如果之前设置过 setImmediate 函数
+       - 直接进入下一个 check 阶段
+     - 如果之前没有设置过 setImmediate 函数
+       - 在当前 poll 阶段等待
+         - 直到轮询队列添加回调函数，就去第一个情况执行
+         - 如果定时器到点了，也会去下一个阶段
+5. check 阶段
+   - 执行 setImmediate 设置的回调函数
+6. close callbacks 关闭阶段
+   - 执行 close 事件回调函数
 
 ---
 
@@ -142,15 +264,15 @@ oBox.addEventListener(
 
    引用计数(reference counting): 这种方式常常会引起内存泄漏，低版本的 IE 使用这种方式。机制就是跟踪一个值的引用次数，当声明一个变量并将一个引用类型赋值给该变量时该值引用次数加 1，当这个变量指向其他一个时该值的引用次数便减一。当该值引用次数为 0 时就会被回收。
 
-## DOM、BOM：
+## DOM、BOM
 
-1. DOM：
+1. DOM
 
 - Document Object Model，文档对象模型
 - DOM 是为了操作文档出现的 API，document 是其的一个对象
 - DOM 和文档有关，这里的文档指的是网页，也就是 html 文档。DOM 和浏览器无关，他关注的是网页本身的内容。
 
-2. BOM：
+2. BOM
 
 - Browser Object Model，浏览器对象模型
 - BOM 是为了操作浏览器出现的 API，window 是其的一个对象
@@ -187,15 +309,145 @@ oBox.addEventListener(
 
 ## 一个页面从输入 url 到页面加载显示完成，发生了什么？
 
-1. 浏览器通过 DNS 将 url 地址解析为 ip(如果有缓存直接返回缓存，否则递归解析)
+1. 浏览器通过 DNS 将 域名 地址解析为 ip(如果有缓存直接返回缓存，否则递归解析)
+   - 浏览器 DNS 缓存
+   - 系统 DNS 缓存
+   - 路由器 DNS 缓存
+   - 网络运营商 DNS 缓存
+   - 递归搜索：blog.baidu.com
+     - .com 域名下查找 DNS
+     - .baidu 域名下查找 DNS
+     - blog 域名下查找 DNS
+     - 出错了
 2. 通过 DNS 解析得到了目标服务器的 ip 地址后，与服务器建立 TCP 连接。
+
    - ip 协议：选择传输路线，负责找到
    - tcp 协议：三次握手，分片，可靠传输，重新发送的机制
-3. 浏览器通过 http 协议发送请求(增加 http 的报文信息)头 体 行
-4. 服务器接收请求后，查库，读文件，拼接好返回的 http 响应
-5. 浏览器收到 html，开始渲染
-6. 解析 html 为 dom，解析 css 为 css-tree，最终生成 render-tree 阻塞渲染
-7. 遍历渲染树开始布局，计算每个节点的位置大小信息
-8. 将渲染树每个节点绘制到屏幕
-9. 加载 js 文件，运行 js 脚本
-10. relow(样式)和 repaint(位置)
+     - 第一次握手，由浏览器发起，告诉服务器我要发送请求了
+     - 第二次握手，由服务器发起，告诉浏览器我我准备接受了，你赶紧发送吧
+     - 第三次握手，由浏览器发起，告诉服务器我马上就发了，准备接受吧
+
+3. 发送请求
+   - 浏览器通过 http 协议发送请求(增加 http 的报文信息)头 体 行
+4. 接收响应
+   - 服务器接收请求后，查库，读文件，拼接好返回的 http 响应
+5. 渲染页面
+   解析 html 为 dom，解析 css 为 css-tree，最终生成 render-tree 阻塞渲染
+   - 遇见 html 标记，浏览器调用 HTML 解析器解析成 Token 并构建成 dom 树
+   - 遇见 style/link 标记，浏览器调用 css 解析器，处理 css 标记并构建 cssom 树
+   - 遇见 script 标记，调用 JavaScript 解析器，处理 script 代码（绑定事件，修改 dom 树/cssom 树）
+   - 将 dom 树和 cssom 树合并成一个渲染树
+   - 根据渲染树来计算布局，计算每个节点的几何信息（布局）
+   - 将各个节点颜色绘制到屏幕上（渲染）
+   - 注意：
+     这步 5 个步骤不一定按照顺序执行，如果 dom 树或 cssom 树被修改了，可能会执行多次布局和渲染，
+     往往实际页面中，这些步骤都会执行多次的。
+6. 断开连接，TCP 四次挥手
+   - 第一次挥手，由浏览器发起的，发送给服务器，我东西发送完了（请求报文），你准备关闭吧
+   - 第二次挥手，由服务器发起的，发送给浏览器，我东西接受完了（请求报文），我准备关闭了，你也准备吧
+   - 第三次挥手，由浏览器发起的，发送给浏览器，我东西发送完了（响应报文），你准备关闭吧
+   - 第四次挥手，由浏览器发起的，发送给服务器，我东西接受完了（响应报文），我准备关闭了，你也准备吧
+
+````
+
+## 如何解决跨域
+
+### 一. JSONP
+
+1. JSONP 是什么
+
+ JSONP(JSON with Padding)，是一个非官方的跨域解决方案，纯粹凭借程序员的聪明才智开发出来，只支持 get 请求。
+
+2. JSONP 怎么工作的？
+
+ 在网页有一些标签天生具有跨域能力，比如：img link iframe script。JSONP 就是利用 script 标签的跨域能力来发送请求的。
+
+3. JSONP 的使用
+
+```js
+//1.动态的创建一个 script 标签
+var script = document.createElement("script");
+//2.设置 script 的 src，设置回调函数
+script.src = "http://localhost:3000/testAJAX?callback=abc";
+function abc(data) {
+alert(data.name);
+}
+//3.将 script 添加到 body 中
+document.body.appendChild(script);
+//4.服务器中路由的处理
+router.get("/testAJAX", function (req, res) {
+console.log("收到请求");
+var callback = req.query.callback;
+var obj = { name: "孙悟空", age: 18 };
+res.send(callback + "(" + JSON.stringify(obj) + ")");
+});
+````
+
+4. jQuery 中的 JSONP
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <button id="btn">按钮</button>
+    <ul id="list"></ul>
+    <script type="text/javascript" src="./jquery-1.12.3.js"></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        var btn = document.getElementById("btn");
+        btn.onclick = function () {
+          $.getJSON(
+            "http://api.douban.com/v2/movie/in_theaters?callback=?", //callback=?固定写法
+            function (data) {
+              console.log(data);
+              //获取所有的电影的条目
+              var subjects = data.subjects;
+              //遍历电影条目
+              for (var i = 0; i < subjects.length; i++) {
+                $("#list").append(
+                  "<li>" +
+                    subjects[i].title +
+                    "<br />" +
+                    '<img src="' +
+                    subjects[i].images.large +
+                    '" >' +
+                    "</li>"
+                );
+              }
+            }
+          );
+        };
+      };
+    </script>
+  </body>
+</html>
+```
+
+### 二. CORS
+
+https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS
+
+1. CORS 是什么？
+
+   CORS（Cross-Origin Resource Sharing），跨域资源共享。CORS 是官方的跨域解决方案，它的特点是不需要在客户端做任何特殊的操作，完全在服务器中进行处理，支持 get 和 post 请求。跨域资源共享标准新增了一组 HTTP 首部字段，允许服务器声明哪些源站通过浏览器有权限访问哪些资源
+
+2. CORS 怎么工作的？
+
+   CORS 是通过设置一个响应头来告诉浏览器，该请求允许跨域，浏览器收到该响应以后就会对响应放行。
+
+3. CORS 的使用
+   ```js
+   //主要是服务器端的设置：
+   router.get("/testAJAX", function (req, res) {
+     //通过 res 来设置响应头，来允许跨域请求
+     //res.set("Access-Control-Allow-Origin","http://127.0.0.1:3000");
+     res.set("Access-Control-Allow-Origin", "*");
+     res.setHeader("Access-Control-Allow-Headers", "*"); //允许自定义头部
+     res.setHeader("Access-Control-Allow-Method", "*"); //允许所有请求方法
+     res.send("testAJAX 返回的响应");
+   });
+   ```

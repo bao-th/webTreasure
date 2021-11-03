@@ -373,7 +373,7 @@ router.get("/testAJAX", function (req, res) {
 </html>
 ```
 
-## 二. CORS
+### 二. CORS
 
 https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS
 
