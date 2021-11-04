@@ -64,6 +64,7 @@
 - 理解：代码执行的环境
 - 时机：代码正式执行之前会进入到执行环境
 - 工作：
+
   1.  创建一个变量对象：
       - 变量
       - 函数及函数的参数
@@ -75,9 +76,10 @@
   3.  创建作用域链
       - 父级作用域链 + 当前的变量对象
   4.  扩展：
+
       ```
       ECObj = {
-        变量对象：{变量，函数，函数的形成}
+        变量对象：{变量，函数，函数的形参}
         scopeChain：父级作用域链 + 当前的变量对象，
         this：{window || 调用其的对象}
       }
@@ -296,6 +298,7 @@ oBox.addEventListener(
 
 - 相同点：都存储在客户端
 - 不同点：
+
   1. 存储大小：
      - cookie 数据大小不能超过 4k
      - sessionStorage 和 localStorage 虽然也有存储大小的限制，但比 cookie 大的多，可以达到 5M 或更大，就是为了解决 cookie 存储空间不足而诞生的
@@ -306,6 +309,107 @@ oBox.addEventListener(
      - 数据与服务器之间的交互方式
      - cookie 的数据会自动的传递到服务器，服务器端也可以写 cookie 到客户端
      - sessionStorage 和 localStorage 不会自动把数据发给服务器，仅在本地保存
+  3. cookie 的使用
+
+  ```js
+  // 1.Cookie 的名称（Name）和值（Value）
+  // 最重要的两个属性，创建 Cookie 时必须填写，其它属性可以使用默认值
+
+  // Cookie 的名称或值如果包含非英文字母，则写入时需要使用 encodeURIComponent() 编码，读取时使用 decodeURIComponent() 解码
+  // document.cookie = `username=${encodeURIComponent('张三')}`;
+  // document.cookie = `${encodeURIComponent('用户名')}=${encodeURIComponent(
+  //   '张三'
+  // )}`;
+
+  // 一般名称使用英文字母，不要用中文，值可以用中文，但是要编码
+
+  // 2.失效（到期）时间
+  // 对于失效的 Cookie，会被浏览器清除
+  // 如果没有设置失效（到期）时间，这样的 Cookie 称为会话 Cookie
+  // 它存在内存中，当会话结束，也就是浏览器关闭时，Cookie 消失
+
+  // 想长时间存在，设置 Expires 或 Max-Age
+  // expires
+  // 值为 Date 类型
+  // document.cookie = `username=alex; expires=${new Date(
+  //   '2100-1-01 00:00:00'
+  // )}`;
+
+  // max-age
+  // 值为数字，表示当前时间 + 多少秒后过期，单位是秒
+  // document.cookie = 'username=alex; max-age=5';
+  // document.cookie = `username=alex; max-age=${24 * 3600 * 30}`;
+
+  // 如果 max-age 的值是 0 或负数，则 Cookie 会被删除
+  // document.cookie = 'username=alex';
+  // document.cookie = 'username=alex; max-age=0';
+  // document.cookie = 'username=alex; max-age=-1';
+
+  // 3.Domain 域
+  // Domain 限定了访问 Cookie 的范围（不同域名）
+
+  // 使用 JS 只能读写当前域或父域的 Cookie，无法读写其他域的 Cookie
+  // document.cookie = 'username=alex; domain=www.imooc.com';
+
+  // www.imooc.com m.imooc.com 当前域
+  // 父域：.imooc.com
+
+  // 4.Path 路径
+  // Path 限定了访问 Cookie 的范围（同一个域名下）
+
+  // 使用 JS 只能读写当前路径和上级路径的 Cookie，无法读写下级路径的 Cookie
+  // document.cookie = 'username=alex; path=/course/list';
+  // document.cookie = 'username=alex; path=/1.Cookie/';
+
+  // 当 Name、Domain、Path 这 3 个字段都相同的时候，才是同一个 Cookie
+
+  // 5.HttpOnly
+  // 设置了 HttpOnly 属性的 Cookie 不能通过 JS 去访问
+
+  // 6.Secure 安全标志
+  // Secure 限定了只有在使用了 https 而不是 http 的情况下才可以发送给服务端
+
+  // Domain、Path、Secure 都要满足条件，还不能过期的 Cookie 才能随着请求发送到服务器端
+
+  // 1.前后端都可以创建 Cookie
+
+  // 2.Cookie 有数量限制
+  // 每个域名下的 Cookie 数量有限
+
+  // 当超过单个域名限制之后，再设置 Cookie，浏览器就会清除以前设置的 Cookie
+
+  // 3.Cookie 有大小限制
+  // 每个 Cookie 的存储容量很小，最多只有 4KB 左右
+  ```
+
+  4. localStorage 的基本用法
+
+  ```js
+  // localStorage 存储的键和值只能是字符串类型
+  // 不同的域名是不能共用 localStorage 的
+  // IE7及以下版本不支持 localStorage，IE8 开始支持
+  // setItem()
+  localStorage.setItem("username", "alex");
+  localStorage.setItem("username", "zs");
+  localStorage.setItem("age", 18);
+  localStorage.setItem("sex", "male");
+
+  // length
+  console.log(localStorage.length);
+
+  // getItem()
+  console.log(localStorage.getItem("username"));
+  console.log(localStorage.getItem("age"));
+  // 获取不存在的返回 null
+  console.log(localStorage.getItem("name"));
+  // removeItem()
+  localStorage.removeItem("username");
+  localStorage.removeItem("age");
+  // 删除不存在的 key，不报错
+  localStorage.removeItem("name");
+  // clear()
+  localStorage.clear();
+  ```
 
 ## 一个页面从输入 url 到页面加载显示完成，发生了什么？
 
@@ -348,40 +452,41 @@ oBox.addEventListener(
    - 第三次挥手，由浏览器发起的，发送给浏览器，我东西发送完了（响应报文），你准备关闭吧
    - 第四次挥手，由浏览器发起的，发送给服务器，我东西接受完了（响应报文），我准备关闭了，你也准备吧
 
-````
-
 ## 如何解决跨域
 
 ### 一. JSONP
 
 1. JSONP 是什么
 
- JSONP(JSON with Padding)，是一个非官方的跨域解决方案，纯粹凭借程序员的聪明才智开发出来，只支持 get 请求。
+JSONP(JSON with Padding)，是一个非官方的跨域解决方案，纯粹凭借程序员的聪明才智开发出来，只支持 get 请求。
 
 2. JSONP 怎么工作的？
 
- 在网页有一些标签天生具有跨域能力，比如：img link iframe script。JSONP 就是利用 script 标签的跨域能力来发送请求的。
+在网页有一些标签天生具有跨域能力，比如：img link iframe script。JSONP 就是利用 script 标签的跨域能力来发送请求的。
 
 3. JSONP 的使用
 
 ```js
 //1.动态的创建一个 script 标签
 var script = document.createElement("script");
+
 //2.设置 script 的 src，设置回调函数
 script.src = "http://localhost:3000/testAJAX?callback=abc";
 function abc(data) {
-alert(data.name);
+  alert(data.name);
 }
+
 //3.将 script 添加到 body 中
 document.body.appendChild(script);
+
 //4.服务器中路由的处理
 router.get("/testAJAX", function (req, res) {
-console.log("收到请求");
-var callback = req.query.callback;
-var obj = { name: "孙悟空", age: 18 };
-res.send(callback + "(" + JSON.stringify(obj) + ")");
+  console.log("收到请求");
+  var callback = req.query.callback;
+  var obj = { name: "孙悟空", age: 18 };
+  res.send(callback + "(" + JSON.stringify(obj) + ")");
 });
-````
+```
 
 4. jQuery 中的 JSONP
 
@@ -445,9 +550,14 @@ https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS
    router.get("/testAJAX", function (req, res) {
      //通过 res 来设置响应头，来允许跨域请求
      //res.set("Access-Control-Allow-Origin","http://127.0.0.1:3000");
+     //Access-Control-Allow 访问控制允许
      res.set("Access-Control-Allow-Origin", "*");
      res.setHeader("Access-Control-Allow-Headers", "*"); //允许自定义头部
      res.setHeader("Access-Control-Allow-Method", "*"); //允许所有请求方法
      res.send("testAJAX 返回的响应");
    });
    ```
+
+```
+
+```

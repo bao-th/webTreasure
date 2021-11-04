@@ -195,7 +195,7 @@ box-shadow: 10px 20px 30px 40px rgba(0,0,0,.4), 10px 20px 30px 40px rgba(0,0,0,.
 
 ```
 
-`CSS精灵：将多个小图标合并制作到一张图片上，使background-positio属性单独显示其中一个，这样的技术叫做CSS精灵技术，也叫作CSS雪碧图`
+`CSS精灵：将多个小图标合并制作到一张图片上，使background-position属性单独显示其中一个，这样的技术叫做CSS精灵技术，也叫作CSS雪碧图`
 
 `CSS精灵可以减少HTTP请求数，加快网页显示速度。缺点也很明显：不方便测量、后期改动麻烦`
 
@@ -286,13 +286,12 @@ animation: r 1s linear 0s 3(执行次数,infinite-永远执行) alternate(偶数
 
 ## 三角形和正方形
 
-````css
- .box {
-        height: 0;
-        width: 0;
-        border-width: 30px;
-        border-style: solid;
-        border-color: #e66161 transparent transparent transparent;
-      }
-    ```
-````
+```css
+.box {
+  height: 0;
+  width: 0;
+  border-width: 30px;
+  border-style: solid;
+  border-color: #e66161 transparent transparent transparent;
+}
+```
