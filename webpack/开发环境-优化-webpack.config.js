@@ -26,7 +26,7 @@ module.exports = {
     compress: true,
     port: 3000,
     open: true,
-    // 开启HMR功能
+    // 开启HMR功能】
     // 当修改了webpack配置，新配置要想生效，必须重新webpack服务
     hot: true,
   },

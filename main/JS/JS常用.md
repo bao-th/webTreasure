@@ -20,7 +20,9 @@ Object.prototype.toString.call(a) === "[object Function]";
 Array.isArray(); // es6 语法
 
 Object.prototype.valueOf(); // 返回对象的原始值
+//判断是否是原型
 {} instanceof Object; // 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上
+Object.prototype.isPrototypeOf({})
 ```
 
 ## 对象原型、构造函数、proto
@@ -324,3 +326,22 @@ Math.round(3.6482 * 100) / 100;
 - 时间戳 - 距离 1970-1-1 的毫秒数
 - getTime() Date.parse() - 将日期对象变为时间戳
 - new Date(时间戳) - 将时间戳变为日期对象
+
+# 算法
+
+## 冒泡排序
+
+```js
+//冒泡排序
+var arr = [5, 4, 3, 2, 1];
+for (let i = 0; i < arr.length - 1; i++) {
+  for (let j = 0; j < arr.length - 1 - i; j++) {
+    if (arr[j] > arr[j + 1]) {
+      var temp = arr[j];
+      arr[j] = arr[j + 1];
+      arr[j + 1] = temp;
+    }
+  }
+}
+console.log(arr);
+```
