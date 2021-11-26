@@ -433,6 +433,7 @@ vm.$watch("isHot", function (newValue, oldValue) {
 ---
 
 ## 收集表单数据
+
     若：<input type="text"/>，则v-model收集的是value值，用户输入的就是value值。
     若：<input type="radio"/>，则v-model收集的是value值，且要给标签配置value值。
     若：<input type="checkbox"/>
@@ -444,3 +445,187 @@ vm.$watch("isHot", function (newValue, oldValue) {
             lazy：失去焦点再收集数据
             number：输入字符串转为有效的数字
             trim：输入首尾空格过滤
+
+---
+
+## 过滤器：
+
+    定义：对要显示的数据进行特定格式化后再显示（适用于一些简单逻辑的处理）。
+    语法：
+        1.注册过滤器：Vue.filter(name,callback) 或 new Vue{filters:{}}
+        2.使用过滤器：{{ xxx | 过滤器名}}  或  v-bind:属性 = "xxx | 过滤器名"
+    备注：
+        1.过滤器也可以接收额外参数、多个过滤器也可以串联
+        2.并没有改变原本的数据, 是产生新的对应的数据
+
+```js
+//全局过滤器
+Vue.filter("mySlice", function (value) {
+  return value.slice(0, 4);
+});
+
+new Vue({
+  el: "#root",
+  data: {
+    time: 1621561377603, //时间戳
+    msg: "你好，尚硅谷",
+  },
+  computed: {
+    fmtTime() {
+      return dayjs(this.time).format("YYYY年MM月DD日 HH:mm:ss");
+    },
+  },
+  methods: {
+    getFmtTime() {
+      return dayjs(this.time).format("YYYY年MM月DD日 HH:mm:ss");
+    },
+  },
+  //局部过滤器
+  filters: {
+    timeFormater(value, str = "YYYY年MM月DD日 HH:mm:ss") {
+      // console.log('@',value)
+      return dayjs(value).format(str);
+    },
+  },
+});
+```
+
+---
+
+## 我们学过的指令：
+
+        v-bind	: 单向绑定解析表达式, 可简写为 :xxx
+        v-model	: 双向数据绑定
+        v-for  	: 遍历数组/对象/字符串
+        v-on   	: 绑定事件监听, 可简写为@
+        v-if 	 	: 条件渲染（动态控制节点是否存存在）
+        v-else 	: 条件渲染（动态控制节点是否存存在）
+        v-show 	: 条件渲染 (动态控制节点是否展示)
+
+    v-text指令：
+        1.作用：向其所在的节点中渲染文本内容。
+        2.与插值语法的区别：v-text会替换掉节点中的内容，{{xx}}则不会。
+
+    v-html指令：
+        1.作用：向指定节点中渲染包含html结构的内容。
+        2.与插值语法的区别：
+            (1).v-html会替换掉节点中所有的内容，{{xx}}则不会。
+            (2).v-html可以识别html结构。
+        3.严重注意：v-html有安全性问题！！！！
+            (1).在网站上动态渲染任意HTML是非常危险的，容易导致XSS攻击。
+            (2).一定要在可信的内容上使用v-html，永不要用在用户提交的内容上！
+
+    v-cloak指令（没有值）：
+        1.本质是一个特殊属性，Vue实例创建完毕并接管容器后，会删掉v-cloak属性。
+        2.使用css配合v-cloak可以解决网速慢时页面展示出{{xxx}}的问题。
+        <style>
+          [v-cloak]{
+            display:none;
+          }
+        </style>
+
+    v-once指令：
+        1.v-once所在节点在初次动态渲染后，就视为静态内容了。
+        2.以后数据的改变不会引起v-once所在结构的更新，可以用于优化性能。
+
+    v-pre指令：
+        1.跳过其所在节点的编译过程。
+        2.可利用它跳过：没有使用指令语法、没有使用插值语法的节点，会加快编译。
+
+---
+
+## 自定义指令
+
+    一、定义语法：
+          (1).局部指令：
+                new Vue({															new Vue({
+                  directives:{指令名:配置对象}   或   		directives{指令名:回调函数}
+                }) 																		})
+          (2).全局指令：
+                  Vue.directive(指令名,配置对象) 或   Vue.directive(指令名,回调函数)
+
+    二、配置对象中常用的3个回调：
+          (1).bind：指令与元素成功绑定时调用。
+          (2).inserted：指令所在元素被插入页面时调用。
+          (3).update：指令所在模板结构被重新解析时调用。
+
+    三、备注：
+          1.指令定义时不加v-，但使用时要加v-；
+          2.指令名如果是多个单词，要使用kebab-case命名方式，不要用camelCase命名。
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>自定义指令</title>
+    <script type="text/javascript" src="../js/vue.js"></script>
+  </head>
+  <body>
+    <!-- 准备好一个容器-->
+    <div id="root">
+      <h2>{{name}}</h2>
+      <h2>当前的n值是：<span v-text="n"></span></h2>
+      <!-- <h2>放大10倍后的n值是：<span v-big-number="n"></span> </h2> -->
+      <h2>放大10倍后的n值是：<span v-big="n"></span></h2>
+      <button @click="n++">点我n+1</button>
+      <hr />
+      <input type="text" v-fbind:value="n" />
+    </div>
+  </body>
+
+  <script type="text/javascript">
+    Vue.config.productionTip = false;
+
+    //定义全局指令
+    /* Vue.directive('fbind',{
+			//指令与元素成功绑定时（一上来）
+			bind(element,binding){
+				element.value = binding.value
+			},
+			//指令所在元素被插入页面时
+			inserted(element,binding){
+				element.focus()
+			},
+			//指令所在的模板被重新解析时
+			update(element,binding){
+				element.value = binding.value
+			}
+		}) */
+
+    new Vue({
+      el: "#root",
+      data: {
+        name: "XXX",
+        n: 1,
+      },
+      directives: {
+        //big函数何时会被调用？1.指令与元素成功绑定时（一上来）。2.指令所在的模板被重新解析时。
+        /* 'big-number'(element,binding){
+					// console.log('big')
+					element.innerText = binding.value * 10
+				}, */
+        big(element, binding) {
+          console.log("big", this); //注意此处的this是window
+          // console.log('big')
+          element.innerText = binding.value * 10;
+        },
+        fbind: {
+          //指令与元素成功绑定时（一上来）
+          bind(element, binding) {
+            element.value = binding.value;
+          },
+          //指令所在元素被插入页面时
+          inserted(element, binding) {
+            element.focus();
+          },
+          //指令所在的模板被重新解析时
+          update(element, binding) {
+            element.value = binding.value;
+          },
+        },
+      },
+    });
+  </script>
+</html>
+```
