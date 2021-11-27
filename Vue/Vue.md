@@ -629,3 +629,81 @@ new Vue({
   </script>
 </html>
 ```
+
+---
+
+## 生命周期
+
+1. 又名：生命周期回调函数、生命周期函数、生命周期钩子。
+2. 是什么：Vue 在关键时刻帮我们调用的一些特殊名称的函数。
+3. 生命周期函数的名字不可更改，但函数的具体内容是程序员根据需求编写的。
+4. 生命周期函数中的 this 指向是 vm 或 组件实例对象。
+
+```js
+new Vue({
+  el: "#root",
+  // template:`
+  // 	<div>
+  // 		<h2>当前的n值是：{{n}}</h2>
+  // 		<button @click="add">点我n+1</button>
+  // 	</div>
+  // `,
+  data: {
+    n: 1,
+  },
+  methods: {
+    bye() {
+      console.log("bye");
+      this.$destroy();
+    },
+  },
+
+  //初始化显示
+  beforeCreate() {
+    //初始化：生命周期、事件，但数据代理未开始，无法通过vm访问到data中的数据、methods中的方法
+    console.log("beforeCreate");
+  },
+  created() {
+    //初始化：数据监测、数据代理
+    console.log("created");
+  },
+
+  //更新阶段
+  beforeMount() {
+    //此时：页面呈现的是未经Vue编译的DOM结构；所有对DOM的操作，最终都不奏效
+    console.log("beforeMount");
+  },
+  mounted() {
+    //此时：页面呈现的是经Vue编译的DOM结构；对DOM的操作均有效（尽可能避免）
+    console.log("mounted");
+  },
+
+  //销毁阶段
+  beforeUpdate() {
+    //此时：数据是新的，但页面是旧的
+    console.log("beforeUpdate");
+  },
+  updated() {
+    //此时：数据是新的，页面也是新的
+    console.log("updated");
+  },
+
+  beforeDestroy() {
+    //此时：vm中所有的：data、methods、指令等等都处于可用状态，马上要执行销毁过程；一般在此阶段：关闭定时器、取消订阅消息、解绑自定义事件等收尾操作
+    console.log("beforeDestroy");
+  },
+  destroyed() {
+    console.log("destroyed");
+  },
+});
+```
+
+- 常用的生命周期钩子
+
+  1. mounted: 发送 ajax 请求、启动定时器、绑定自定义事件、订阅消息等【初始化操作】。
+  2. beforeDestroy: 清除定时器、解绑自定义事件、取消订阅消息等【收尾工作】。
+
+- 关于销毁 Vue 实例
+  1. 销毁后借助 Vue 开发者工具看不到任何信息。
+  2. 销毁后自定义事件会失效，但原生 DOM 事件依然有效。
+  3. 一般不会在 beforeDestroy 操作数据，因为即便操作数据，也不会再触发更新流程了。
