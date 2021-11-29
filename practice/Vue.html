@@ -20,10 +20,11 @@
       />
       <!-- v-bind ===》:
       v-on ===》@ -->
+      <hello></hello>
     </div>
   </body>
 
-  <script>
+  <!-- <script>
     Vue.config.productionTip = false; //阻止 vue 在启动时生成生产提示
     new Vue({
       el: "#root",
@@ -35,6 +36,31 @@
           console.log(number, event);
           alert("同学你好！");
         },
+      },
+    });
+  </script> -->
+
+  <script>
+    const hello = Vue.extend({
+      template: `
+        <div>
+          <h2>你好啊！{{name}}</h2>
+        </div>
+      `,
+      data() {
+        return {
+          name: "Tom",
+        };
+      },
+    });
+    // Vue.component("hello", hello);
+    new Vue({
+      el: "#root",
+      data: {
+        name: "jack",
+      },
+      components: {
+        hello,
       },
     });
   </script>
